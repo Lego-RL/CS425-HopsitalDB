@@ -14,6 +14,8 @@ load_dotenv()
 
 #-------------------------------------------------------------------------SQL Functions-------------------------------------------------------------------------------------------------------------
 
+from input import get_patient_info
+
 import mysql.connector
 from mysql.connector import Error
 
@@ -32,7 +34,21 @@ cnx = mysql.connector.connect(user=db_user, password=db_password,
 
 
 def doctorAddPatient(doctorID):
-    print("SQL coming soon")
+    cursor = cnx.cursor()
+
+    patient: dict | None = None
+    while not patient:
+        try:
+            patient = get_patient_info(doctorID)
+        except ValueError:
+            print("Different type entered than requested, try again.")
+        
+    query = "INSERT INTO patient VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+    cursor.execute(query, tuple(patient.values()))
+    cnx.commit()
+    cursor.close()
+
     
 
 def doctorviewPatients(doctorID):
@@ -218,6 +234,9 @@ def doctorLoggedIn(doctorID):
 
     if(doctorSelection==1):
         doctorviewPatients(doctorID)
+
+    elif doctorSelection == 2:
+        doctorAddPatient(doctorID)
     
 
 
