@@ -8,11 +8,23 @@ Make sure dictors can only view their patients
 
 """
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 #-------------------------------------------------------------------------SQL Functions-------------------------------------------------------------------------------------------------------------
 
 import mysql.connector
 from mysql.connector import Error
-cnx = mysql.connector.connect(user='', password='',
+
+db_user: str | None = os.getenv("USER")
+db_password: str | None = os.getenv("PASSWORD")
+
+if not db_user or not db_password:
+    print("Create a .env file and set USER and PASSWORD environment variables!")
+    exit(0)
+
+cnx = mysql.connector.connect(user=db_user, password=db_password,
                               host='127.0.0.1',
                               database='hospitalDatabase')
 
@@ -157,7 +169,7 @@ def doctor():
         query3 = query2 = ("SELECT StaffName FROM Staff WHERE StaffID = "+str(staffID))
         cursor.execute(query3)
         for x in cursor:
-            print("Welcome Dr. "+x[0])
+            print("Welcome Dr. "+ str(x[0]))
         doctorID = inputDoctorName
         doctorLoggedIn(doctorID)
     except mysql.connector.Error as err:
@@ -248,7 +260,7 @@ def nurse():
         query3 = query2 = ("SELECT StaffName FROM Staff WHERE StaffID = "+str(staffID))
         cursor.execute(query3)
         for x in cursor:
-            print("Welcome Nurse "+x[0])
+            print("Welcome Nurse "+ str(x[0]))
         nurseID = nurseIDTemp
         nurseLoggerIn(nurseID)
     except mysql.connector.Error as err:
@@ -317,7 +329,7 @@ def patient():
         query3 = ("SELECT PatientName FROM Patient WHERE PatientID = "+str(patientIDTemp))
         cursor.execute(query3)
         for x in cursor:
-            print("Welcome Patient "+x[0])
+            print("Welcome Patient "+ str(x[0]))
         patientID = patientIDTemp
         patientLoggedIn(patientID)
     except mysql.connector.Error as err:
