@@ -345,19 +345,7 @@ def nurseViewEquipment(staffID):
 
 
 #-------------------------------------------------------------------------Patient Functions-------------------------------------------------------------------------------------------------------------
-
-def patientViewAppointments(patientID):
-    try:
-        cursor = cnx.cursor()
-        query = ("SELECT * FROM Appointment WHERE PatientID = "+str(patientID))
-        print("AppointmentID,ReasonOfVisit,Date,Time,PatientID,DoctorID")
-        cursor.execute(query)
-        for x in cursor:
-            print(x)
-    except mysql.connector.Error as err:
-        print("Something went wrong your input value is not correct: {}".format(err))
-
-
+#1
 def patientCreateAppointments(patientID):
     cursor = cnx.cursor()
 
@@ -374,6 +362,23 @@ def patientCreateAppointments(patientID):
     cnx.commit()
     cursor.close()
 
+
+
+#2
+def patientViewAppointments(patientID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Appointment WHERE PatientID = "+str(patientID))
+        print("AppointmentID,ReasonOfVisit,Date,Time,PatientID,DoctorID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
+
+
+
+#3
 def patientViewRecords(patientID):
     try:
         cursor = cnx.cursor()
@@ -385,7 +390,7 @@ def patientViewRecords(patientID):
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
 
-
+#4
 def patientViewVisitors(patientID):
     try:
         cursor = cnx.cursor()
@@ -397,7 +402,7 @@ def patientViewVisitors(patientID):
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
 
-    
+#5
 def patientViewBilling(patientID):
     try:
         cursor = cnx.cursor()
@@ -409,6 +414,9 @@ def patientViewBilling(patientID):
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
     
+    
+    
+#6
 def patientViewRoom(patientID):
     try:
         cursor = cnx.cursor()
@@ -665,40 +673,50 @@ def patient():
 def patientLoggedIn(patientID):
     print("Please select one of the following options and enter the corresponding number.")
     print("Would you like to:")
-    print("1. View your appointments")
-    print("2. Create an appointment")
-    print("3. View your billing information")
-    print("4. View your room assignment")
-    print("5. View name of your nurse")
-    print("6. View name of your doctor")
-    print("7. View your visitors")
+    print("1. Create an Appointment with a Doctor.")
+    print("2. View a list of your Appointments.")
+    print("3. View Medical Records.")
+    print("4. View a list of your Visitors.")
+    print("5. View your Billing information.")
+    print("6. View your Room Number.")
     try:
       patientSelection = int(input("Please make your selection here: "))
     except ValueError:
         patientSelection = 0
     
-    while(not(patientSelection>0 and patientSelection<8) ):
+    while(not(patientSelection>0 and patientSelection<7) ):
         print()
         print("Unfortunately, your selection choice is invalid, please try once again")
         print("Please select one of the following options and enter the corresponding number.")
         print("Would you like to:")
-        print("1. View your appointments")
-        print("2. Create an appointment")
-        print("3. View your billing information")
-        print("4. View your room assignment")
-        print("5. View name of your nurse")
-        print("6. View name of your doctor")
-        print("7. View your visitors")
+        print("1. Create an Appointment with a Doctor.")
+        print("2. View a list of your Appointments.")
+        print("3. View Medical Records.")
+        print("4. View a list of your Visitors.")
+        print("5. View your Billing information.")
+        print("6. View your Room Number.")
         try:
-            patientSelection = int(input("Please make your selection here: "))
+          patientSelection = int(input("Please make your selection here: "))
         except ValueError:
             patientSelection = 0
 
     if patientSelection == 1:
-        patientViewAppointments(patientID)
+        patientCreateAppointments(patientID)
 
     elif patientSelection == 2:
-        patientCreateAppointments(patientID)
+        patientViewAppointments(patientID)
+   
+    elif patientSelection == 3:
+        patientViewRecords(patientID)
+    
+    elif patientSelection == 4:
+        patientViewVisitors(patientID)
+        
+    elif patientSelection == 5:
+        patientViewBilling(patientID)
+    
+    elif patientSelection == 6:
+        patientViewRoom(patientID)
 
     # patientViewAppointments(patientID)
     logOff = input("Would you like to logoff (Y/N): ")
