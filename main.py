@@ -170,6 +170,70 @@ def doctorViewEquipment(doctorID):
     medicalEquipmentID = input("Please select the record ID from the list above: ")
     #c.execute("SELECT * FROM MedicalEquipment WHERE MedicalEquipment = %s;", (medicalEquipmentID,))
 
+
+def doctorRankBills(doctorID):
+    """
+    Show the user a list of bill costs.
+    """
+
+    cursor = cnx.cursor()
+    query: str = """SELECT PatientName, TotalCharge, RANK() OVER (ORDER BY TotalCharge DESC)
+    FROM patient NATURAL JOIN billing"""
+
+    cursor.execute(query)
+
+    for bill in cursor:
+        name, charge, rank = bill
+        print(f"{rank}) {name}: ${charge}")
+
+    
+def doctorHospitalStats(doctorID):
+    """
+    Show a list of hospital stats
+    """
+
+    tables: list[str] = ["doctor", "nurse", "patient"]
+
+    cursor = cnx.cursor()
+
+    for table in tables:
+        query: str = f"SELECT COUNT(*) FROM {table};"
+        cursor.execute(query)
+
+        count = 0
+        for num in cursor:
+            count = int(num[0])
+            
+        print(f"{table.title()}: {count} entries")
+
+
+def doctorDiseasePercentages(doctorID):
+    """
+    View the percentage of patients with each disease
+    """
+
+    cursor = cnx.cursor()
+
+    query: str = """SELECT Diagnosis, 
+    COUNT(Diagnosis)*100 / (SELECT COUNT(*) FROM medicalrecords) AS percent
+    FROM medicalrecords 
+    GROUP BY Diagnosis
+    ORDER BY percent DESC;
+    """
+
+    cursor.execute(query)
+
+    diagnosis_str: str = ""
+    for diagnosis in cursor:
+        diagnosis_str += f"{diagnosis[0]}: {int(diagnosis[1])}%\n"
+
+    if diagnosis_str:
+        print(diagnosis_str)
+
+    else:
+        print("No medical records to display!")
+
+
 #-------------------------------------------------------------------------Doctor Functions-------------------------------------------------------------------------------------------------------------
 
 
@@ -321,11 +385,14 @@ def doctorLoggedIn(doctorID):
     print("7. Create a Medical Appointment for an existing Patient.")
     print("8. View the Billing Information of your existing Patient.")
     print("9. View the Equipment you are currently using.")
+    print("10. View all active bills by cost.")
+    print("11. View total number of doctors, nurses and patients at hospital.")
+    print("12. View percentage of patients with each diagnosis from medical records.")
     try:
       doctorSelection = int(input("Please make your selection here: "))
     except ValueError:
         doctorSelection = 0
-    while(not(doctorSelection>0 and doctorSelection<10) ):
+    while(not(doctorSelection>0 and doctorSelection<13) ):
         print()
         print("Unfortunately, your selection choice is invalid, please try once again")
         print("Please select one of the following options and enter the corresponding number.")
@@ -339,6 +406,9 @@ def doctorLoggedIn(doctorID):
         print("7. Create a Medical Appointment for an existing Patient.")
         print("8. View the Billing Information of your existing Patient.")
         print("9. View the Equipment you are currently using.")
+        print("10. View all active bills by cost.")
+        print("11. View total number of doctors, nurses and patients at hospital.")
+        print("12. View percentage of patients with each diagnosis from medical records.")
         try:
           doctorSelection = int(input("Please make your selection here: "))
         except ValueError:
@@ -355,6 +425,15 @@ def doctorLoggedIn(doctorID):
 
     elif doctorSelection == 6:
         doctorDeleteMedicalRecord(doctorID)
+
+    elif doctorSelection == 10:
+        doctorRankBills(doctorID)
+    
+    elif doctorSelection == 11:
+        doctorHospitalStats(doctorID)
+
+    elif doctorSelection == 12:
+        doctorDiseasePercentages(doctorID)
     
 
     logOff = input("Would you like to logoff (Y/N): ")
