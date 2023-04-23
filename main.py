@@ -14,7 +14,7 @@ load_dotenv()
 
 #-------------------------------------------------------------------------SQL Functions-------------------------------------------------------------------------------------------------------------
 
-from input import get_patient_info, get_patient_id
+from input import get_patient_info, get_patient_id, get_appointment_info, get_record_id, get_bill_info
 
 import mysql.connector
 from mysql.connector import Error
@@ -91,7 +91,6 @@ def doctorDeletePatient(doctorID):
         return
 
 
-    
     sure = input("\nAre you sure you want to delete this patient's records? (Y/N): ")
 
     if sure.lower() == "y":
@@ -111,6 +110,54 @@ def doctorViewMedicalRecord(doctorID):
     #c.execute("SELECT * FROM MedicalRecords WHERE DoctorID = %s;", (doctorID,))
     recordID = input("Please select the record ID from the list above: ")
     #c.execute("SELECT * FROM MedicalRecords WHERE RatientID = %s;", (recordID,))
+
+
+def doctorDeleteMedicalRecord(doctorID):
+    cursor = cnx.cursor()
+    cursor.execute("SELECT RecordID, PatientName, Diagnosis, Treatment, DoctorID FROM medicalrecords NATURAL JOIN patient WHERE DoctorID = %s;", (doctorID,))
+
+    records_str: str = ""
+    for record in cursor:
+        record_id, patient_name = record[0], record[1]
+        diagnosis, treatment = record[2], record[3]
+        records_str += f"ID #{record_id}: {patient_name}. Diagnosis: {diagnosis}, Treatment: {treatment}"
+
+    if not records_str:
+        print("You currently have no patients with stored medical records.")
+        return
+    
+    print(records_str)
+
+    RecordID: int | None = None
+    while not RecordID:
+        try:
+            RecordID = get_record_id()
+        except ValueError:
+            print("Different type entered than requested, try again.")
+
+    # cursor.execute("SELECT * FROM medicalrecords WHERE RecordID = %s", (RecordID,))
+    cursor.execute("SELECT RecordID, PatientName, Diagnosis, Treatment FROM medicalrecords NATURAL JOIN patient WHERE RecordID = %s;", (RecordID,))
+
+    record_str: str = ""
+    # should only be one record with matching ID at most
+    for record in cursor:
+        record_id, patient_name = record[0], record[1]
+        diagnosis, treatment = record[2], record[3]
+        record_str += f"ID #{record_id}: {patient_name}. Diagnosis: {diagnosis}, Treatment: {treatment}"
+
+    if not record_str:
+        print(f"No medical records match ID #{RecordID}.\n")
+        return
+
+
+    sure = input("\nAre you sure you want to delete this medical record? (Y/N): ")
+
+    if sure.lower() == "y":
+        cursor.execute("DELETE FROM medicalrecords WHERE RecordID = %s;", (RecordID,))
+        cnx.commit()
+        cursor.close()
+
+        print("Successfully deleted medical record.")
 
 
 def doctorCreateAppointment(doctorID):
@@ -149,6 +196,24 @@ def nurseViewEquipment(nurseID):
     medicalEquipmentID = input("Please select the record ID from the list above: ")
     #c.execute("SELECT * FROM MedicalEquipment WHERE MedicalEquipment = %s;", (medicalEquipmentID,))
 
+
+def nurseAddBilling(nurseID):
+    cursor = cnx.cursor()
+
+    bill: dict | None = None
+    while not bill:
+        try:
+            bill = get_bill_info()
+        except ValueError:
+            print("Different type entered than requested, try again.")
+        
+    query = "INSERT INTO billing VALUES (%s, %s, %s, %s, %s)"
+
+    cursor.execute(query, tuple(bill.values()))
+    cnx.commit()
+    cursor.close()
+
+
 #-------------------------------------------------------------------------Nurse Functions-------------------------------------------------------------------------------------------------------------
 
 
@@ -157,7 +222,6 @@ def nurseViewEquipment(nurseID):
 #-------------------------------------------------------------------------Patient Functions-------------------------------------------------------------------------------------------------------------
 
 def patientViewAppointments(patientID):
-    print("Made it here")
     try:
         cursor = cnx.cursor()
         query = ("SELECT * FROM Appointment WHERE PatientID = "+str(patientID))
@@ -167,10 +231,23 @@ def patientViewAppointments(patientID):
             print(x)
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
-        print("SQL coming soon")
+
 
 def patientCreateAppointments(patientID):
-    print("SQL coming soon")
+    cursor = cnx.cursor()
+
+    appt: dict | None = None
+    while not appt:
+        try:
+            appt = get_appointment_info(patientID)
+        except ValueError:
+            print("Different type entered than requested, try again.")
+        
+    query = "INSERT INTO appointment VALUES (%s, %s, %s, %s, %s, %s)"
+
+    cursor.execute(query, tuple(appt.values()))
+    cnx.commit()
+    cursor.close()
 
 def patientViewBilling(patientID):
     print("SQL coming soon")
@@ -240,14 +317,15 @@ def doctorLoggedIn(doctorID):
     print("3. Delete an existing Patient of yours.")
     print("4. Add a Medical Record to your existing Patient.")
     print("5. View the Medical Records of your existing Patient.")
-    print("6. Create a Medical Appointment for an existing Patient.")
-    print("7. View the Billing Information of your existing Patient.")
-    print("8. View the Equipment you are currently using.")
+    print("6. Delete a Medical Record of a patient of yours.")
+    print("7. Create a Medical Appointment for an existing Patient.")
+    print("8. View the Billing Information of your existing Patient.")
+    print("9. View the Equipment you are currently using.")
     try:
       doctorSelection = int(input("Please make your selection here: "))
     except ValueError:
         doctorSelection = 0
-    while(not(doctorSelection>0 and doctorSelection<9) ):
+    while(not(doctorSelection>0 and doctorSelection<10) ):
         print()
         print("Unfortunately, your selection choice is invalid, please try once again")
         print("Please select one of the following options and enter the corresponding number.")
@@ -257,9 +335,10 @@ def doctorLoggedIn(doctorID):
         print("3. Delete an existing Patient of yours.")
         print("4. Add a Medical Record to your existing Patient.")
         print("5. View the Medical Records of your existing Patient.")
-        print("6. Create a Medical Appointment for an existing Patient.")
-        print("7. View the Billing Information of your existing Patient.")
-        print("8. View the Equipment you are currently using.")
+        print("6. Delete a Medical Record of a patient of yours.")
+        print("7. Create a Medical Appointment for an existing Patient.")
+        print("8. View the Billing Information of your existing Patient.")
+        print("9. View the Equipment you are currently using.")
         try:
           doctorSelection = int(input("Please make your selection here: "))
         except ValueError:
@@ -273,15 +352,11 @@ def doctorLoggedIn(doctorID):
 
     elif doctorSelection == 3:
         doctorDeletePatient(doctorID)
+
+    elif doctorSelection == 6:
+        doctorDeleteMedicalRecord(doctorID)
     
 
-
-
-
-
-
-
-    
     logOff = input("Would you like to logoff (Y/N): ")
     while(logOff!='Y' and logOff!='N'):
         print("Unfortunately, your selection choice is invalid, please try once again")
@@ -298,7 +373,7 @@ def doctorLoggedIn(doctorID):
 def nurse():
     try:
         cursor = cnx.cursor()
-        nurseIDTemp = input("Please enter your Nurse ID or 'M' if you would like to return to the main menu:: ")
+        nurseIDTemp = input("Please enter your Nurse ID or 'M' if you would like to return to the main menu: ")
         if(str(nurseIDTemp)=='M'):
             main()
         query = ("SELECT NurseID FROM Nurse")
@@ -332,6 +407,7 @@ def nurseLoggerIn(nurseID):
     print("2. View the Medical Records of your existing Patients.")
     print("3. View the Room of your existing Patient.")
     print("4. View the Equipment you are currently using.")
+    print("5. Add bill for patient to pay.")
 
 
     try:
@@ -339,7 +415,7 @@ def nurseLoggerIn(nurseID):
     except ValueError:
         nurseSelection = 0
     
-    while(not(nurseSelection>0 and nurseSelection<4) ):
+    while(not(nurseSelection>0 and nurseSelection<6) ):
         print()
         print("Unfortunately, your selection choice is invalid, please try once again")
         print("Please select one of the following options and enter the corresponding number.")
@@ -348,12 +424,19 @@ def nurseLoggerIn(nurseID):
         print("2. View the Medical Records of your existing Patients.")
         print("3. View the Room of your existing Patient.")
         print("4. View the Equipment you are currently using.")
+        print("5. Add bill for patient to pay.")
+
         try:
           nurseSelection = int(input("Please make your selection here: "))
         except ValueError:
             nurseSelection = 0
 
 
+    if nurseSelection == 1:
+        pass
+
+    elif nurseSelection == 5:
+        nurseAddBilling(nurseID)
             
     logOff = input("Would you like to logoff (Y/N): ")
     while(logOff!='Y' and logOff!='N'):
@@ -379,7 +462,7 @@ def patient():
                 print("The Patient ID Specified has been located in the database.")
                 found = True
         if(not found):
-            print("The patientID has not been foudn in the database.")
+            print("The patientID has not been found in the database.")
             patient()
         query3 = ("SELECT PatientName FROM Patient WHERE PatientID = "+str(patientIDTemp))
         cursor.execute(query3)
@@ -423,7 +506,13 @@ def patientLoggedIn(patientID):
         except ValueError:
             patientSelection = 0
 
-    patientViewAppointments(patientID)
+    if patientSelection == 1:
+        patientViewAppointments(patientID)
+
+    elif patientSelection == 2:
+        patientCreateAppointments(patientID)
+
+    # patientViewAppointments(patientID)
     logOff = input("Would you like to logoff (Y/N): ")
     while(logOff!='Y' and logOff!='N'):
         print("Unfortunately, your selection choice is invalid, please try once again")
