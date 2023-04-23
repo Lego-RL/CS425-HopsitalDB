@@ -14,7 +14,7 @@ load_dotenv()
 
 #-------------------------------------------------------------------------SQL Functions-------------------------------------------------------------------------------------------------------------
 
-from input import get_patient_info, get_patient_id, get_appointment_info, get_record_id, get_bill_info
+from input import get_patient_info, get_patient_id, get_appointment_info, get_record_id, get_bill_info, get_medicalRecord_info
 
 import mysql.connector
 from mysql.connector import Error
