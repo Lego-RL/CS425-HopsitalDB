@@ -14,7 +14,7 @@ load_dotenv()
 
 #-------------------------------------------------------------------------SQL Functions-------------------------------------------------------------------------------------------------------------
 
-from input import get_patient_info
+from input import get_patient_info, get_patient_id
 
 import mysql.connector
 from mysql.connector import Error
@@ -64,10 +64,43 @@ def doctorviewPatients(doctorID):
 
 
 def doctorDeletePatient(doctorID):
-    print("SQL coming soon")
-    #c.execute("SELECT * FROM Patient WHERE DoctorID = %s;", (doctorID,))
-    patientID = input("Please select the patient ID from the list above: ")
-    #c.execute("DELETE FROM Patient WHERE PatientID = %s;", (patientID,))
+
+    cursor = cnx.cursor()
+    cursor.execute("SELECT * FROM Patient WHERE DoctorID = %s;", (doctorID,))
+
+    for patient in cursor:
+        patient_id, patient_name = patient[0], patient[1]
+        print(f"ID #{patient_id}: {patient_name}")
+
+    patientID: int | None = None
+    while not patientID:
+        try:
+            patientID = get_patient_id()
+        except ValueError:
+            print("Different type entered than requested, try again.")
+
+    cursor.execute("SELECT * FROM PATIENT WHERE PatientID = %s", (patientID,))
+
+    patient_str: str = ""
+    # should only be one patient with matching ID at most
+    for patient in cursor:
+        patient_str += f"ID #{patient[0]}: {patient[1]}"
+
+    if not patient_str:
+        print(f"No patient records match ID #{patientID}.\n")
+        return
+
+
+    
+    sure = input("\nAre you sure you want to delete this patient's records? (Y/N): ")
+
+    if sure.lower() == "y":
+        cursor.execute("DELETE FROM Patient WHERE PatientID = %s;", (patientID,))
+        cnx.commit()
+        cursor.close()
+
+        print("Successfully deleted patient record.")
+
 
 
 def doctorAddMedicalRecord(doctorID):
@@ -237,6 +270,9 @@ def doctorLoggedIn(doctorID):
 
     elif doctorSelection == 2:
         doctorAddPatient(doctorID)
+
+    elif doctorSelection == 3:
+        doctorDeletePatient(doctorID)
     
 
 

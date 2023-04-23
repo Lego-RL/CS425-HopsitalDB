@@ -27,3 +27,13 @@ def get_patient_info(doctorID: int) -> dict:
     }
 
     return patient
+
+
+def get_patient_id() -> int:
+    """
+    Retrieve patient ID from user
+    """
+
+    patientID = int(input("Please select the patient ID to be deleted from the list above (number): "))
+
+    return patientID
