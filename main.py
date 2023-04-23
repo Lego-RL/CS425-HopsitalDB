@@ -292,19 +292,8 @@ def doctorDiseasePercentages(doctorID):
 
 #-------------------------------------------------------------------------Nurse Functions-------------------------------------------------------------------------------------------------------------
 
-def nurseViewPatient(nurseID):
-    print("SQL coming soon")
-    #c.execute("SELECT * FROM Patient WHERE NurseID = %s;", (nurseID,))
-    patientID = input("Please select the patient ID from the list above: ")
-    #c.execute("SELECT * FROM Patient WHERE PatientID = %s;", (patientID,))
 
-def nurseViewMedicalRecords(nurseID):#####REMOVE????
-    print("SQL coming soon")
-
-def nurseViewRoom(nurseID):#####REMOVE????
-    print("SQL coming soon")
-
-    
+#1    
 def nurseAddMedicalRecord(nurseID):
     cursor = cnx.cursor()
     MedicalRecord: dict | None = None
@@ -320,18 +309,7 @@ def nurseAddMedicalRecord(nurseID):
     cnx.commit()
     cursor.close()
 
-def nurseViewEquipment(staffID):
-    try:
-        cursor = cnx.cursor()
-        query = ("SELECT * FROM MedicalEquipment WHERE staffID = "+str(staffID))
-        print("EquipmentID,Type,StaffID")
-        cursor.execute(query)
-        for x in cursor:
-            print(x)
-    except mysql.connector.Error as err:
-        print("Something went wrong your input value is not correct: {}".format(err))
-
-
+#2
 def nurseAddBilling(nurseID):
     cursor = cnx.cursor()
 
@@ -347,6 +325,18 @@ def nurseAddBilling(nurseID):
     cursor.execute(query, tuple(bill.values()))
     cnx.commit()
     cursor.close()
+
+#3
+def nurseViewEquipment(staffID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM MedicalEquipment WHERE staffID = "+str(staffID))
+        print("EquipmentID,Type,StaffID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
 
 
 #-------------------------------------------------------------------------Nurse Functions-------------------------------------------------------------------------------------------------------------
