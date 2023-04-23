@@ -63,6 +63,43 @@ def doctorviewPatients(doctorID):
         print("Something went wrong your input value is not correct: {}".format(err))
 
 
+        
+def doctorUpdatePatient(doctorID):
+    try:
+        patientID = input("Please enter the patientID you would like to select:")
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Patient WHERE PatientID = "+str(patientID))
+        cursor.execute(query)
+        print("Patient located.")
+        for x in cursor:
+            print(x)
+        lstResponses = ["PatientName", "Gender", "PhoneNumber", "Address", "Diagnosis", "RoomNumber"]
+        userSelection = 0
+        print("Would you like to update PatientName(1), Gender(2), PhoneNumber(3), Address(4), Diagnosis(5), or RoomNumber(6).")
+        try:
+            userSelection = int(input("Please make your selection here: "))
+        except ValueError:
+            userSelection = 0
+        
+        while(not(userSelection>0 and userSelection<7) ):
+            print()
+            print("Unfortunately, your selection choice is invalid, please try once again")
+            print("Would you like to update PatientName(1), Gender(2), PhoneNumber(3), Address(4), Diagnosis(5), or RoomNumber(6).")
+            try:
+              userSelection = int(input("Please make your selection here: "))
+            except ValueError:
+                userSelection = 0
+        selection = lstResponses[userSelection-1]
+        print("You have selected to update: "+selection)
+        updateValue = input("Please input the information that you would like to update "+selection+" to: ")
+        query3 = ("UPDATE Patient SET "+selection+" = '"+updateValue+"' WHERE PatientID = "+str(patientID))
+        cursor.execute(query3)
+        cnx.commit()
+
+    except mysql.connector.Error as err:
+         print("Something went wrong your input value is not correct: {}".format(err))
+
+
 def doctorDeletePatient(doctorID):
 
     cursor = cnx.cursor()
