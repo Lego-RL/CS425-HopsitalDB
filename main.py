@@ -249,20 +249,59 @@ def patientCreateAppointments(patientID):
     cnx.commit()
     cursor.close()
 
+def patientViewRecords(patientID):
+    try:
+        patientID =11
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM MedicalRecords WHERE PatientID = "+str(patientID))
+        print("RecordID,Date,Diagnosis,Treatment,PatientID,DoctorID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
+
+
+def patientViewVisitors(patientID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Visitors WHERE PatientID = "+str(patientID))
+        print("VisitorID,Date,RelationshipToPatient,PatientID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
+
+    
 def patientViewBilling(patientID):
-    print("SQL coming soon")
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Billing WHERE PatientID = "+str(patientID))
+        print("BillNumber,InsuranceInfo,Payment,TotalCharge,PatientID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
     
 def patientViewRoom(patientID):
-    print("SQL coming soon")
-
-def patientDoctor(patientID):
-    print("SQL coming soon")
-
-def patientViewNurse(patientID):
-    print("SQL coming soon")
-
-def patientViewVisitor(patientID):
-    print("SQL coming soon")
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT RoomNumber FROM Patient WHERE PatientID = "+str(patientID))
+        cursor.execute(query)
+        roomnum = 0
+        for x in cursor:
+            roomnum = x[0]
+        print("Room Number: ",roomnum)
+        print("RoomNumber,RoomType,HospitalSection")
+        query2 = ("SELECT * FROM Room WHERE RoomNumber = "+str(roomnum))
+        cursor.execute(query2)
+        for x in cursor:
+            roomnum = x[0]
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
 #-------------------------------------------------------------------------Patient Functions-------------------------------------------------------------------------------------------------------------
 
 
