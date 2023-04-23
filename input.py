@@ -1,3 +1,15 @@
+from os import system, name
+
+def clear():
+    """
+    Clear terminal window
+    """
+
+    if name == "nt":
+        system("cls")
+    else:
+        system("clear")
+
 
 
 def get_patient_info(doctorID: int) -> dict:

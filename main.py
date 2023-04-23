@@ -14,7 +14,8 @@ load_dotenv()
 
 #-------------------------------------------------------------------------SQL Functions-------------------------------------------------------------------------------------------------------------
 
-from input import get_patient_info, get_patient_id, get_appointment_info, get_record_id, get_bill_info, get_medicalRecord_info
+from input import get_patient_info, get_patient_id, get_appointment_info, \
+    get_record_id, get_bill_info, get_medicalRecord_info, clear
 
 import mysql.connector
 from mysql.connector import Error
@@ -38,9 +39,19 @@ def doctorviewPatients(doctorID):
         cursor = cnx.cursor()
         query = ("SELECT * FROM Patient WHERE DoctorID = "+str(doctorID))
         cursor.execute(query)
-        print("Here is a list of your patients:")
-        for x in cursor:
-            print(x)
+        
+        patients_str: str = ""
+        for patient in cursor:
+            patients_str += f"{patient}\n"
+
+        if not patients_str:
+            print("You have no patients to display.")
+            return
+        
+        else:
+            print("Here is a list of your patients:")
+            print(patients_str)
+
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
 
@@ -452,6 +463,9 @@ def doctor():
         inputDoctorName = input("Please enter your doctor ID or 'M' if you would like to return to the main menu: ")
         if(str(inputDoctorName)=='M'):
             main()
+
+        clear()
+
         query = ("SELECT DoctorID FROM Doctor")
         cursor.execute(query)
         for x in cursor:
@@ -518,6 +532,8 @@ def doctorLoggedIn(doctorID,staffID):
         except ValueError:
             doctorSelection = 0
 
+    print()
+
     if(doctorSelection==1):
         doctorviewPatients(doctorID)
 
@@ -561,6 +577,7 @@ def doctorLoggedIn(doctorID,staffID):
     if(logOff=='Y'):
         print("Thank you for logging on.")
     elif(logOff=='N'):
+        clear()
         doctorLoggedIn(doctorID,staffID)
         
         
@@ -573,6 +590,9 @@ def nurse():
         nurseIDTemp = input("Please enter your Nurse ID or 'M' if you would like to return to the main menu: ")
         if(str(nurseIDTemp)=='M'):
             main()
+
+        clear()
+
         query = ("SELECT NurseID FROM Nurse")
         cursor.execute(query)
         for x in cursor:
@@ -625,6 +645,7 @@ def nurseLoggedIn(nurseID,staffID):
         except ValueError:
             nurseSelection = 0
 
+    print()
 
     if nurseSelection == 1:
         nurseAddMedicalRecord(nurseID)
@@ -642,6 +663,7 @@ def nurseLoggedIn(nurseID,staffID):
     if(logOff=='Y'):
         print("Thank you for logging on.")
     elif(logOff=='N'):
+        clear()
         nurseLoggedIn(nurseID,staffID)
 
 
@@ -651,6 +673,9 @@ def patient():
         patientIDTemp = input("Please enter your Patient ID or 'M' if you would like to return to the main menu: ")
         if(str(patientIDTemp)=='M'):
             main()
+        
+        clear()
+
         query = ("SELECT PatientID FROM Patient")
         cursor.execute(query)
         found = False
@@ -701,6 +726,8 @@ def patientLoggedIn(patientID):
         except ValueError:
             patientSelection = 0
 
+    print()
+
     if patientSelection == 1:
         patientCreateAppointments(patientID)
 
@@ -727,6 +754,7 @@ def patientLoggedIn(patientID):
     if(logOff=='Y'):
         print("Thank you for logging on.")
     elif(logOff=='N'):
+        clear()
         patientLoggedIn(patientID)
 
 #-------------------------------------------------------------------------Doctor,Patient,Nurse Functions-------------------------------------------------------------------------------------------------------------
