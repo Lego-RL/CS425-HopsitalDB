@@ -630,7 +630,7 @@ def nurseLoggedIn(nurseID,staffID):
         nurseAddMedicalRecord(nurseID)
 
     elif nurseSelection == 2:
-        nurseAddBilling(nurseID,staffID)
+        nurseAddBilling(nurseID)
     
     elif nurseSelection == 3:
         nurseViewEquipment(staffID)
