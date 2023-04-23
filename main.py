@@ -591,11 +591,10 @@ def nurse():
 def nurseLoggedIn(nurseID,staffID):
     print("Please select one of the following options and enter the corresponding number.")
     print("Would you like to:")
-    print("1. View list of Patients assigned to you.")
-    print("2. View the Medical Records of your existing Patients.")
-    print("3. View the Room of your existing Patient.")
-    print("4. View the Equipment you are currently using.")
-    print("5. Add bill for patient to pay.")
+    print("1. Add a Medical Records to a Patient assigned to you.")
+    print("2. Add Billing Information to a Patient assigned to you.")
+    print("3. View Equipment you are currently using.")
+
 
 
     try:
@@ -603,16 +602,14 @@ def nurseLoggedIn(nurseID,staffID):
     except ValueError:
         nurseSelection = 0
     
-    while(not(nurseSelection>0 and nurseSelection<6) ):
+    while(not(nurseSelection>0 and nurseSelection<4) ):
         print()
         print("Unfortunately, your selection choice is invalid, please try once again")
         print("Please select one of the following options and enter the corresponding number.")
         print("Would you like to:")
-        print("1. View list of Patients assigned to you.")
-        print("2. View the Medical Records of your existing Patients.")
-        print("3. View the Room of your existing Patient.")
-        print("4. View the Equipment you are currently using.")
-        print("5. Add bill for patient to pay.")
+        print("1. Add a Medical Records to a Patient assigned to you.")
+        print("2. Add Billing Information to a Patient assigned to you.")
+        print("3. View Equipment you are currently using.")
 
         try:
           nurseSelection = int(input("Please make your selection here: "))
@@ -621,10 +618,13 @@ def nurseLoggedIn(nurseID,staffID):
 
 
     if nurseSelection == 1:
-        pass
+        nurseAddMedicalRecord(nurseID)
 
-    elif nurseSelection == 5:
+    elif nurseSelection == 2:
         nurseAddBilling(nurseID,staffID)
+    
+    elif nurseSelection == 3:
+        nurseViewEquipment(staffID)
             
     logOff = input("Would you like to logoff (Y/N): ")
     while(logOff!='Y' and logOff!='N'):
@@ -633,7 +633,7 @@ def nurseLoggedIn(nurseID,staffID):
     if(logOff=='Y'):
         print("Thank you for logging on.")
     elif(logOff=='N'):
-        nurseLoggedIn(nurseID)
+        nurseLoggedIn(nurseID,staffID)
 
 
 def patient():
