@@ -237,11 +237,16 @@ def nurseViewMedicalRecords(nurseID):#####REMOVE????
 def nurseViewRoom(nurseID):#####REMOVE????
     print("SQL coming soon")
 
-def nurseViewEquipment(nurseID):
-    print("SQL coming soon")
-    #c.execute("SELECT * FROM MedicalEquipment WHERE NurseID = %s;", (nurseID,))
-    medicalEquipmentID = input("Please select the record ID from the list above: ")
-    #c.execute("SELECT * FROM MedicalEquipment WHERE MedicalEquipment = %s;", (medicalEquipmentID,))
+def nurseViewEquipment(staffID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM MedicalEquipment WHERE staffID = "+str(staffID))
+        print("EquipmentID,Type,StaffID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
 
 
 def nurseAddBilling(nurseID):
@@ -478,7 +483,7 @@ def nurse():
         for x in cursor:
             print("Welcome Nurse "+ str(x[0]))
         nurseID = nurseIDTemp
-        nurseLoggerIn(nurseID)
+        nurseLoggedIn(nurseID,staffID)
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
         nurse()
@@ -486,7 +491,7 @@ def nurse():
    
 
 
-def nurseLoggerIn(nurseID):
+def nurseLoggedIn(nurseID,staffID):
     print("Please select one of the following options and enter the corresponding number.")
     print("Would you like to:")
     print("1. View list of Patients assigned to you.")
@@ -531,7 +536,7 @@ def nurseLoggerIn(nurseID):
     if(logOff=='Y'):
         print("Thank you for logging on.")
     elif(logOff=='N'):
-        nurseLoggerIn(nurseID)
+        nurseLoggedIn(nurseID)
 
 
 def patient():
