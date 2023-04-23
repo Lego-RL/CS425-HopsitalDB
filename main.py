@@ -32,7 +32,22 @@ cnx = mysql.connector.connect(user=db_user, password=db_password,
 
 #-------------------------------------------------------------------------Doctor Functions-------------------------------------------------------------------------------------------------------------
 
+#1
+def doctorviewPatients(doctorID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Patient WHERE DoctorID = "+str(doctorID))
+        cursor.execute(query)
+        print("Here is a list of your patients:")
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
 
+
+
+
+#2
 def doctorAddPatient(doctorID):
     cursor = cnx.cursor()
 
@@ -51,19 +66,8 @@ def doctorAddPatient(doctorID):
 
     
 
-def doctorviewPatients(doctorID):
-    try:
-        cursor = cnx.cursor()
-        query = ("SELECT * FROM Patient WHERE DoctorID = "+str(doctorID))
-        cursor.execute(query)
-        print("Here is a list of your patients:")
-        for x in cursor:
-            print(x)
-    except mysql.connector.Error as err:
-        print("Something went wrong your input value is not correct: {}".format(err))
 
-
-        
+#3 
 def doctorUpdatePatient(doctorID):
     try:
         patientID = input("Please enter the patientID you would like to select:")
@@ -99,7 +103,7 @@ def doctorUpdatePatient(doctorID):
     except mysql.connector.Error as err:
          print("Something went wrong your input value is not correct: {}".format(err))
 
-
+#4
 def doctorDeletePatient(doctorID):
 
     cursor = cnx.cursor()
@@ -137,6 +141,8 @@ def doctorDeletePatient(doctorID):
 
         print("Successfully deleted patient record.")
 
+        
+#5        
 def doctorViewAppointments(doctorID):
     try:
     cursor = cnx.cursor()
@@ -149,16 +155,10 @@ def doctorViewAppointments(doctorID):
 except mysql.connector.Error as err:
     print("Something went wrong your input value is not correct: {}".format(err))
 
-def doctorAddMedicalRecord(doctorID):
-    print("SQL coming soon")
     
-def doctorViewMedicalRecord(doctorID):
-    print("SQL coming soon")
-    #c.execute("SELECT * FROM MedicalRecords WHERE DoctorID = %s;", (doctorID,))
-    recordID = input("Please select the record ID from the list above: ")
-    #c.execute("SELECT * FROM MedicalRecords WHERE RatientID = %s;", (recordID,))
+    
 
-
+#6
 def doctorDeleteMedicalRecord(doctorID):
     cursor = cnx.cursor()
     cursor.execute("SELECT RecordID, PatientName, Diagnosis, Treatment, DoctorID FROM medicalrecords NATURAL JOIN patient WHERE DoctorID = %s;", (doctorID,))
@@ -207,7 +207,7 @@ def doctorDeleteMedicalRecord(doctorID):
         print("Successfully deleted medical record.")
 
 
-        
+#7       
 def doctorViewEquipment(staffID):
     try:
         cursor = cnx.cursor()
@@ -220,14 +220,7 @@ def doctorViewEquipment(staffID):
         print("Something went wrong your input value is not correct: {}".format(err))
         
         
-        
-def doctorCreateAppointment(doctorID):
-    print("SQL coming soon")
-
-
-
-
-
+#8
 def doctorRankBills(doctorID):
     """
     Show the user a list of bill costs.
@@ -243,7 +236,7 @@ def doctorRankBills(doctorID):
         name, charge, rank = bill
         print(f"{rank}) {name}: ${charge}")
 
-    
+#9
 def doctorHospitalStats(doctorID):
     """
     Show a list of hospital stats
@@ -263,7 +256,7 @@ def doctorHospitalStats(doctorID):
             
         print(f"{table.title()}: {count} entries")
 
-
+#10
 def doctorDiseasePercentages(doctorID):
     """
     View the percentage of patients with each disease
