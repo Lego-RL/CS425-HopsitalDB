@@ -91,3 +91,30 @@ def get_bill_info() -> dict:
     }
 
     return bill
+
+
+
+def get_medicalRecord_info() -> dict:
+    """
+    Retrieve all patient info from user
+    """
+
+    id: int = int(input("Input Record ID (number): "))
+    date: str = input("Input date (date MM/DD/YYYY): ")
+    diagnosis: str = input("Input patient diagnosis (string): ")
+    patient_id: int = int(input("Input Patient ID (int): "))
+    doctor_id: int = int(input("Input Patient ID (int): "))
+
+    patient: dict = {
+        "ID": id,
+        "name": patient_name,
+        "gender": patient_gender,
+        "phone_num": patient_phone_num,
+        "address": patient_address,
+        "Diagnosis": patient_diagnosis,
+        "doc_id": doctorID,
+        "nurse_id": nurse_id,
+        "room_num": room_num
+    }
+
+    return patient

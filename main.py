@@ -63,6 +63,43 @@ def doctorviewPatients(doctorID):
         print("Something went wrong your input value is not correct: {}".format(err))
 
 
+        
+def doctorUpdatePatient(doctorID):
+    try:
+        patientID = input("Please enter the patientID you would like to select:")
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Patient WHERE PatientID = "+str(patientID))
+        cursor.execute(query)
+        print("Patient located.")
+        for x in cursor:
+            print(x)
+        lstResponses = ["PatientName", "Gender", "PhoneNumber", "Address", "Diagnosis", "RoomNumber"]
+        userSelection = 0
+        print("Would you like to update PatientName(1), Gender(2), PhoneNumber(3), Address(4), Diagnosis(5), or RoomNumber(6).")
+        try:
+            userSelection = int(input("Please make your selection here: "))
+        except ValueError:
+            userSelection = 0
+        
+        while(not(userSelection>0 and userSelection<7) ):
+            print()
+            print("Unfortunately, your selection choice is invalid, please try once again")
+            print("Would you like to update PatientName(1), Gender(2), PhoneNumber(3), Address(4), Diagnosis(5), or RoomNumber(6).")
+            try:
+              userSelection = int(input("Please make your selection here: "))
+            except ValueError:
+                userSelection = 0
+        selection = lstResponses[userSelection-1]
+        print("You have selected to update: "+selection)
+        updateValue = input("Please input the information that you would like to update "+selection+" to: ")
+        query3 = ("UPDATE Patient SET "+selection+" = '"+updateValue+"' WHERE PatientID = "+str(patientID))
+        cursor.execute(query3)
+        cnx.commit()
+
+    except mysql.connector.Error as err:
+         print("Something went wrong your input value is not correct: {}".format(err))
+
+
 def doctorDeletePatient(doctorID):
 
     cursor = cnx.cursor()
@@ -100,7 +137,17 @@ def doctorDeletePatient(doctorID):
 
         print("Successfully deleted patient record.")
 
+def doctorViewAppointments(doctorID):
+    try:
+    cursor = cnx.cursor()
+    query = ("SELECT * FROM Appointment WHERE doctorID = "+str(doctorID))
+    print("AppointmentID,ReasonOfVisit,Date,Time,PatientID,DoctorID")
+    cursor.execute(query)
+    for x in cursor:
+        print(x)
 
+except mysql.connector.Error as err:
+    print("Something went wrong your input value is not correct: {}".format(err))
 
 def doctorAddMedicalRecord(doctorID):
     print("SQL coming soon")
@@ -160,15 +207,25 @@ def doctorDeleteMedicalRecord(doctorID):
         print("Successfully deleted medical record.")
 
 
+        
+def doctorViewEquipment(staffID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM MedicalEquipment WHERE staffID = "+str(staffID))
+        print("EquipmentID,Type,StaffID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
+        
+        
+        
 def doctorCreateAppointment(doctorID):
     print("SQL coming soon")
 
 
-def doctorViewEquipment(doctorID):
-    print("SQL coming soon")
-    #c.execute("SELECT * FROM MedicalEquipment WHERE DoctorID = %s;", (doctorID,))
-    medicalEquipmentID = input("Please select the record ID from the list above: ")
-    #c.execute("SELECT * FROM MedicalEquipment WHERE MedicalEquipment = %s;", (medicalEquipmentID,))
+
 
 
 def doctorRankBills(doctorID):
@@ -254,11 +311,32 @@ def nurseViewMedicalRecords(nurseID):#####REMOVE????
 def nurseViewRoom(nurseID):#####REMOVE????
     print("SQL coming soon")
 
-def nurseViewEquipment(nurseID):
-    print("SQL coming soon")
-    #c.execute("SELECT * FROM MedicalEquipment WHERE NurseID = %s;", (nurseID,))
-    medicalEquipmentID = input("Please select the record ID from the list above: ")
-    #c.execute("SELECT * FROM MedicalEquipment WHERE MedicalEquipment = %s;", (medicalEquipmentID,))
+    
+def nurseAddMedicalRecord(nurseID):
+    cursor = cnx.cursor()
+    MedicalRecord: dict | None = None
+    while not MedicalRecord:
+        try:
+            MedicalRecord = get_medicalRecord_info()
+        except ValueError:
+            print("Different type entered than requested, try again.")
+        
+    query = "INSERT INTO MedicalRecords VALUES (%s, %s, %s, %s, %s, %s)"
+
+    cursor.execute(query, tuple(MedicalRecord.values()))
+    cnx.commit()
+    cursor.close()
+
+def nurseViewEquipment(staffID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM MedicalEquipment WHERE staffID = "+str(staffID))
+        print("EquipmentID,Type,StaffID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
 
 
 def nurseAddBilling(nurseID):
@@ -313,20 +391,58 @@ def patientCreateAppointments(patientID):
     cnx.commit()
     cursor.close()
 
+def patientViewRecords(patientID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM MedicalRecords WHERE PatientID = "+str(patientID))
+        print("RecordID,Date,Diagnosis,Treatment,PatientID,DoctorID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
+
+
+def patientViewVisitors(patientID):
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Visitors WHERE PatientID = "+str(patientID))
+        print("VisitorID,Date,RelationshipToPatient,PatientID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
+
+    
 def patientViewBilling(patientID):
-    print("SQL coming soon")
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Billing WHERE PatientID = "+str(patientID))
+        print("BillNumber,InsuranceInfo,Payment,TotalCharge,PatientID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
     
 def patientViewRoom(patientID):
-    print("SQL coming soon")
-
-def patientDoctor(patientID):
-    print("SQL coming soon")
-
-def patientViewNurse(patientID):
-    print("SQL coming soon")
-
-def patientViewVisitor(patientID):
-    print("SQL coming soon")
+    try:
+        cursor = cnx.cursor()
+        query = ("SELECT RoomNumber FROM Patient WHERE PatientID = "+str(patientID))
+        cursor.execute(query)
+        roomnum = 0
+        for x in cursor:
+            roomnum = x[0]
+        print("Room Number: ",roomnum)
+        print("RoomNumber,RoomType,HospitalSection")
+        query2 = ("SELECT * FROM Room WHERE RoomNumber = "+str(roomnum))
+        cursor.execute(query2)
+        for x in cursor:
+            roomnum = x[0]
+            print(x)
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
 #-------------------------------------------------------------------------Patient Functions-------------------------------------------------------------------------------------------------------------
 
 
@@ -361,7 +477,7 @@ def doctor():
         for x in cursor:
             print("Welcome Dr. "+ str(x[0]))
         doctorID = inputDoctorName
-        doctorLoggedIn(doctorID)
+        doctorLoggedIn(doctorID,staffID)
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
         doctor()
@@ -373,7 +489,7 @@ def doctor():
     
 
 
-def doctorLoggedIn(doctorID):
+def doctorLoggedIn(doctorID,staffID):
     print("Please select one of the following options and enter the corresponding number.")
     print("Would you like to:")
     print("1. View list of Patients you are assigneed to.")
@@ -471,7 +587,7 @@ def nurse():
         for x in cursor:
             print("Welcome Nurse "+ str(x[0]))
         nurseID = nurseIDTemp
-        nurseLoggerIn(nurseID)
+        nurseLoggedIn(nurseID,staffID)
     except mysql.connector.Error as err:
         print("Something went wrong your input value is not correct: {}".format(err))
         nurse()
@@ -479,7 +595,7 @@ def nurse():
    
 
 
-def nurseLoggerIn(nurseID):
+def nurseLoggedIn(nurseID,staffID):
     print("Please select one of the following options and enter the corresponding number.")
     print("Would you like to:")
     print("1. View list of Patients assigned to you.")
@@ -524,7 +640,7 @@ def nurseLoggerIn(nurseID):
     if(logOff=='Y'):
         print("Thank you for logging on.")
     elif(logOff=='N'):
-        nurseLoggerIn(nurseID)
+        nurseLoggedIn(nurseID)
 
 
 def patient():
