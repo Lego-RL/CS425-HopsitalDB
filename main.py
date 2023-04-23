@@ -237,6 +237,22 @@ def nurseViewMedicalRecords(nurseID):#####REMOVE????
 def nurseViewRoom(nurseID):#####REMOVE????
     print("SQL coming soon")
 
+    
+def nurseAddMedicalRecord(nurseID):
+    cursor = cnx.cursor()
+    MedicalRecord: dict | None = None
+    while not MedicalRecord:
+        try:
+            MedicalRecord = get_medicalRecord_info()
+        except ValueError:
+            print("Different type entered than requested, try again.")
+        
+    query = "INSERT INTO MedicalRecords VALUES (%s, %s, %s, %s, %s, %s)"
+
+    cursor.execute(query, tuple(MedicalRecord.values()))
+    cnx.commit()
+    cursor.close()
+
 def nurseViewEquipment(staffID):
     try:
         cursor = cnx.cursor()
