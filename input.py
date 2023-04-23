@@ -107,14 +107,10 @@ def get_medicalRecord_info() -> dict:
 
     patient: dict = {
         "ID": id,
-        "name": patient_name,
-        "gender": patient_gender,
-        "phone_num": patient_phone_num,
-        "address": patient_address,
-        "Diagnosis": patient_diagnosis,
-        "doc_id": doctorID,
-        "nurse_id": nurse_id,
-        "room_num": room_num
+        "Date": date,
+        "Diagnosis": diagnosis,
+        "PatientID": patient_id,
+        "Doctor_id": doctor_id,
     }
 
     return patient
