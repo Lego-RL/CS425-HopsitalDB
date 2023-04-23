@@ -486,38 +486,34 @@ def doctorLoggedIn(doctorID,staffID):
     print("Please select one of the following options and enter the corresponding number.")
     print("Would you like to:")
     print("1. View list of Patients you are assigneed to.")
-    print("2. Add a new Patient to your assignment.")
-    print("3. Delete an existing Patient of yours.")
-    print("4. Add a Medical Record to your existing Patient.")
-    print("5. View the Medical Records of your existing Patient.")
-    print("6. Delete a Medical Record of a patient of yours.")
-    print("7. Create a Medical Appointment for an existing Patient.")
-    print("8. View the Billing Information of your existing Patient.")
-    print("9. View the Equipment you are currently using.")
-    print("10. View all active bills by cost.")
-    print("11. View total number of doctors, nurses and patients at hospital.")
-    print("12. View percentage of patients with each diagnosis from medical records.")
+    print("2. Add a new Patient with a Nurse to your assignment.")
+    print("3. Update an existing Patient of yours from the Hospital Database.")
+    print("4. Delete an existing Patient of yours.")
+    print("5. View your Appointments with Patients.")
+    print("6. View Equipment you are currently using.")
+    print("7. Delete a Medical Record of an existing Patient.")
+    print("8. View all active bills by cost.")
+    print("9. View total number of doctors, nurses and patients at hospital.")
+    print("10. View percentage of patients with each diagnosis from medical records.")
     try:
       doctorSelection = int(input("Please make your selection here: "))
     except ValueError:
         doctorSelection = 0
-    while(not(doctorSelection>0 and doctorSelection<13) ):
+    while(not(doctorSelection>0 and doctorSelection<11) ):
         print()
         print("Unfortunately, your selection choice is invalid, please try once again")
         print("Please select one of the following options and enter the corresponding number.")
         print("Would you like to:")
         print("1. View list of Patients you are assigneed to.")
         print("2. Add a new Patient with a Nurse to your assignment.")
-        print("3. Delete an existing Patient of yours.")
-        print("4. Add a Medical Record to your existing Patient.")
-        print("5. View the Medical Records of your existing Patient.")
-        print("6. Delete a Medical Record of a patient of yours.")
-        print("7. Create a Medical Appointment for an existing Patient.")
-        print("8. View the Billing Information of your existing Patient.")
-        print("9. View the Equipment you are currently using.")
-        print("10. View all active bills by cost.")
-        print("11. View total number of doctors, nurses and patients at hospital.")
-        print("12. View percentage of patients with each diagnosis from medical records.")
+        print("3. Update an existing Patient of yours from the Hospital Database.")
+        print("4. Delete an existing Patient of yours.")
+        print("5. View your Appointments with Patients.")
+        print("6. View Equipment you are currently using.")
+        print("7. Delete a Medical Record of an existing Patient.")
+        print("8. View all active bills by cost.")
+        print("9. View total number of doctors, nurses and patients at hospital.")
+        print("10. View percentage of patients with each diagnosis from medical records.")
         try:
           doctorSelection = int(input("Please make your selection here: "))
         except ValueError:
@@ -528,21 +524,35 @@ def doctorLoggedIn(doctorID,staffID):
 
     elif doctorSelection == 2:
         doctorAddPatient(doctorID)
-
+        
     elif doctorSelection == 3:
+        doctorUpdatePatient(doctorID)
+        
+    elif doctorSelection == 4:
         doctorDeletePatient(doctorID)
-
+        
+        
+    elif doctorSelection == 5:
+        doctorViewAppointments(doctorID)
+        
     elif doctorSelection == 6:
         doctorDeleteMedicalRecord(doctorID)
-
-    elif doctorSelection == 10:
+        
+        
+    elif doctorSelection == 7:
+        doctorViewEquipment(staffID)
+     
+    elif doctorSelection == 8:
         doctorRankBills(doctorID)
-    
-    elif doctorSelection == 11:
+        
+        
+    elif doctorSelection == 9:
         doctorHospitalStats(doctorID)
-
-    elif doctorSelection == 12:
+        
+        
+    elif doctorSelection == 10:
         doctorDiseasePercentages(doctorID)
+
     
 
     logOff = input("Would you like to logoff (Y/N): ")
@@ -552,7 +562,7 @@ def doctorLoggedIn(doctorID,staffID):
     if(logOff=='Y'):
         print("Thank you for logging on.")
     elif(logOff=='N'):
-        doctorLoggedIn(doctorID)
+        doctorLoggedIn(doctorID,staffID)
         
         
 
@@ -624,7 +634,7 @@ def nurseLoggedIn(nurseID,staffID):
         pass
 
     elif nurseSelection == 5:
-        nurseAddBilling(nurseID)
+        nurseAddBilling(nurseID,staffID)
             
     logOff = input("Would you like to logoff (Y/N): ")
     while(logOff!='Y' and logOff!='N'):
