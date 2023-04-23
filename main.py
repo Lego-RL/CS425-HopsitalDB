@@ -329,7 +329,6 @@ def patientCreateAppointments(patientID):
 
 def patientViewRecords(patientID):
     try:
-        patientID =11
         cursor = cnx.cursor()
         query = ("SELECT * FROM MedicalRecords WHERE PatientID = "+str(patientID))
         print("RecordID,Date,Diagnosis,Treatment,PatientID,DoctorID")
