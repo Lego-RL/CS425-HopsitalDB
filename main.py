@@ -145,15 +145,15 @@ def doctorDeletePatient(doctorID):
 #5        
 def doctorViewAppointments(doctorID):
     try:
-    cursor = cnx.cursor()
-    query = ("SELECT * FROM Appointment WHERE doctorID = "+str(doctorID))
-    print("AppointmentID,ReasonOfVisit,Date,Time,PatientID,DoctorID")
-    cursor.execute(query)
-    for x in cursor:
-        print(x)
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM Appointment WHERE doctorID = "+str(doctorID))
+        print("AppointmentID,ReasonOfVisit,Date,Time,PatientID,DoctorID")
+        cursor.execute(query)
+        for x in cursor:
+            print(x)
 
-except mysql.connector.Error as err:
-    print("Something went wrong your input value is not correct: {}".format(err))
+    except mysql.connector.Error as err:
+        print("Something went wrong your input value is not correct: {}".format(err))
 
     
     
