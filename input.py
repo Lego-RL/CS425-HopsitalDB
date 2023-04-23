@@ -102,6 +102,7 @@ def get_medicalRecord_info() -> dict:
     id: int = int(input("Input Record ID (number): "))
     date: str = input("Input date (date MM/DD/YYYY): ")
     diagnosis: str = input("Input patient diagnosis (string): ")
+    treatment: str = input("Input patient treatment (string): ")
     patient_id: int = int(input("Input Patient ID (int): "))
     doctor_id: int = int(input("Input Doctor ID (int): "))
 
@@ -109,8 +110,10 @@ def get_medicalRecord_info() -> dict:
         "ID": id,
         "Date": date,
         "Diagnosis": diagnosis,
+        "Treatment": treatment,
         "PatientID": patient_id,
         "Doctor_id": doctor_id,
     }
 
     return patient
+
